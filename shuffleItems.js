@@ -34,7 +34,7 @@ const executeShuffle = async (playlistId) => {
         tracks: shuffled_uri_objects,
       },
     });
-    console.log('before deletion snapshot id', deleteResponse.data);
+    console.log('before shuffle snapshot id', deleteResponse.data);
 
     const putResponse = await axios({
       method: 'put',
@@ -46,11 +46,11 @@ const executeShuffle = async (playlistId) => {
         uris: shuffled_uris,
       },
     });
-    console.log('after deletion snapshot id', putResponse.data);
+    console.log('after shuffle snapshot id', putResponse.data);
   } catch (e) {
-    console.log('error');
+    console.log('🚨 error');
     console.log(e);
   }
 };
 
-executeShuffle(process.argv[0]);
+executeShuffle(process.argv[2]);
