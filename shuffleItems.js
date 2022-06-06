@@ -1,18 +1,18 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { ACCESS_TOKEN } from './constants.js';
-dotenv.config()
+dotenv.config();
 
-function shuffle(a) {
-  var j, x, i;
-  for (i = a.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    x = a[i];
-    a[i] = a[j];
-    a[j] = x;
+const shuffle = (array) => {
+  const getRandomPos = (idx) => Math.floor(Math.random() * (idx + 1)); // random index from 0 to i
+
+  const result = [...array];
+  for (let idx = array.length - 1; idx > 0; idx--) {
+    const newPos = getRandomPos(idx);
+    [result[idx], result[newPos]] = [result[newPos], result[idx]];
   }
-  return a;
-}
+  return result;
+};
 
 const executeShuffle = async (playlistId) => {
   try {
