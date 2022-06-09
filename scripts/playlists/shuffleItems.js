@@ -1,6 +1,6 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { ACCESS_TOKEN } from './constants.js';
+import { ACCESS_TOKEN } from '../../constants.js';
 dotenv.config();
 
 const shuffle = (array) => {
@@ -14,6 +14,9 @@ const shuffle = (array) => {
   return result;
 };
 
+const stringifyUris = (uris) =>
+  '"' + JSON.stringify(uris).replace(/"/g, "'") + '"';
+
 const executeShuffle = async (playlistId) => {
   try {
     const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
@@ -22,31 +25,36 @@ const executeShuffle = async (playlistId) => {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
     });
-    const track_uris = getResponse.data.items.map((item) => item.track.uri);
-    const shuffled_uris = shuffle(track_uris);
-    const shuffled_uri_objects = shuffled_uris.map((uri) => ({ uri }));
+    const trackUris = getResponse.data.items.map((item) => item.track.uri);
+    const shuffledUris = shuffle(trackUris);
+    console.log(
+      'Backup track uris:',
+      stringifyUris(shuffledUris),
+      '\nℹ️  Use the exact string (including quotes) as the second argument to the addItems script if needed.'
+    );
+    const shuffledUriObjects = shuffledUris.map((uri) => ({ uri }));
 
-    const deleteResponse = await axios.delete(endpoint, {
+    await axios.delete(endpoint, {
       headers: {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
       data: {
-        tracks: shuffled_uri_objects,
+        tracks: shuffledUriObjects,
       },
     });
-    console.log('before shuffle snapshot id', deleteResponse.data);
 
-    const putResponse = await axios({
-      method: 'put',
-      url: endpoint,
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+    await axios.post(
+      endpoint,
+      {
+        uris: shuffledUris,
       },
-      data: {
-        uris: shuffled_uris,
-      },
-    });
-    console.log('after shuffle snapshot id', putResponse.data);
+      {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      }
+    );
+    console.log('Success 🎉');
   } catch (e) {
     console.log('🚨 error');
     console.log(e);
