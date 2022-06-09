@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import { ACCESS_TOKEN } from '../../constants.js';
 dotenv.config();
 
+import { stringifyUris } from '../helper/stringHelper.js';
+
 const shuffle = (array) => {
   const getRandomPos = (idx) => Math.floor(Math.random() * (idx + 1)); // random index from 0 to i
 
@@ -14,9 +16,6 @@ const shuffle = (array) => {
   return result;
 };
 
-const stringifyUris = (uris) =>
-  '"' + JSON.stringify(uris).replace(/"/g, "'") + '"';
-
 const executeShuffle = async (playlistId) => {
   try {
     const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
@@ -27,10 +26,9 @@ const executeShuffle = async (playlistId) => {
     });
     const trackUris = getResponse.data.items.map((item) => item.track.uri);
     const shuffledUris = shuffle(trackUris);
+    console.log('Backup track uris:', stringifyUris(shuffledUris));
     console.log(
-      'Backup track uris:',
-      stringifyUris(shuffledUris),
-      '\nℹ️  Use the exact string (including quotes) as the second argument to the addItems script if needed.'
+      'ℹ️  Use the exact string (including quotes) as the second argument to the addItems script if needed.'
     );
     const shuffledUriObjects = shuffledUris.map((uri) => ({ uri }));
 

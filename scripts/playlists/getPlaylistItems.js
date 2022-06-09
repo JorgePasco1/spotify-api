@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { ACCESS_TOKEN } from '../../constants.js';
 dotenv.config();
 
-const getPlaylistInfo = async (playlistId) => {
+const getPlaylistItems = async (playlistId) => {
   try {
     const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
     const getResponse = await axios.get(endpoint, {
@@ -11,9 +11,9 @@ const getPlaylistInfo = async (playlistId) => {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
     });
-    const track_uris = getResponse.data.items.map((item) => item.track.uri);
+    const trackUris = getResponse.data.items.map((item) => item.track.uri);
 
-    console.log(track_uris);
+    console.log(trackUris);
 
   } catch (e) {
     console.log('🚨 error');
@@ -21,4 +21,4 @@ const getPlaylistInfo = async (playlistId) => {
   }
 };
 
-getPlaylistInfo(process.argv[2]);
+getPlaylistItems(process.argv[2]);
